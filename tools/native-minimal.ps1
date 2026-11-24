@@ -3,9 +3,9 @@ $adb='C:\platform-tools\adb.exe'
 & $adb root
 & $adb wait-for-device
 if ((& $adb shell id) -notmatch 'uid=0') { throw 'Root ADB required' }
-$home='com.android.launcher3'
-& $adb shell pm enable --user 0 $home
-$component=(& $adb shell cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME -p $home | Select-Object -Last 1).Trim()
+$launcherPackage='com.android.launcher3'
+& $adb shell pm enable --user 0 $launcherPackage
+$component=(& $adb shell cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME -p $launcherPackage | Select-Object -Last 1).Trim()
 if ($component -notmatch '^com\.android\.launcher3/') { throw 'Native launcher not found; leaving Woz Shell installed' }
 & $adb shell cmd package set-home-activity --user 0 $component
 if ($LASTEXITCODE -ne 0) { throw 'Cannot restore native launcher' }
