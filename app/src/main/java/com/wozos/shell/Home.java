@@ -15,16 +15,16 @@ public class Home extends Activity {
  private final int white=Color.WHITE, gray=0xff999999;
  @Override public void onCreate(Bundle b){super.onCreate(b); getWindow().setStatusBarColor(Color.BLACK);getWindow().setNavigationBarColor(Color.BLACK); show("home");}
  @Override protected void onNewIntent(Intent i){super.onNewIntent(i);show("home");}
- private int dp(float n){return (int)(n*getResources().getDisplayMetrics().density+.5f);}
- private TextView text(String s,int size,int color){TextView t=new TextView(this);t.setText(s);t.setTextSize(size);t.setTextColor(color);t.setTypeface(Typeface.create("sans-serif-light",Typeface.NORMAL));t.setIncludeFontPadding(false);return t;}
- private void row(String s,Runnable r){TextView t=text(s,36,white);t.setPadding(0,dp(9),0,dp(9));t.setMinHeight(dp(56));t.setFocusable(true);t.setOnClickListener(v->r.run());list.addView(t);}
- private void label(String s){TextView t=text(s,17,gray);t.setPadding(0,dp(16),0,dp(8));list.addView(t);}
+ private int dp(float n){return (int)(n*Math.min(getResources().getDisplayMetrics().widthPixels/272f,getResources().getDisplayMetrics().heightPixels/480f)+.5f);}
+ private TextView text(String s,int size,int color){TextView t=new TextView(this);t.setText(s);t.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, size * Math.min(getResources().getDisplayMetrics().widthPixels / 272f, getResources().getDisplayMetrics().heightPixels / 480f));t.setTextColor(color);t.setTypeface(Typeface.create("sans-serif-light",Typeface.NORMAL));t.setIncludeFontPadding(false);return t;}
+ private void row(String s,Runnable r){TextView t=text(s,30,white);t.setPadding(0,dp(4),0,dp(4));t.setMinHeight(dp(40));t.setFocusable(true);t.setOnClickListener(v->r.run());list.addView(t);}
+ private void label(String s){TextView t=text(s,13,gray);t.setPadding(0,dp(16),0,dp(8));list.addView(t);}
  private void app(String name,String pkg){row(name,()->{Intent i=getPackageManager().getLaunchIntentForPackage(pkg);if(i!=null){try{startActivity(i);}catch(Exception e){notice();}}else notice();});}
  private void notice(){Toast.makeText(this,"Application unavailable",Toast.LENGTH_SHORT).show();}
  private void settings(String action){try{startActivity(new Intent(action));}catch(Exception e){notice();}}
- private void show(String p){page=p; LinearLayout root=new LinearLayout(this);root.setOrientation(1);root.setBackgroundColor(Color.BLACK);root.setPadding(dp(26),dp(12),dp(12),0);
- LinearLayout nav=new LinearLayout(this);for(String s:new String[]{"menu","quickplay"}){TextView t=text(s,20,s.equals(p)||s.equals("menu")&&p.equals("home")?white:gray);t.setPadding(0,dp(8),dp(26),dp(12));t.setOnClickListener(v->show(s.equals("menu")?"home":s));nav.addView(t);}root.addView(nav);
- if(!p.equals("home")){TextView title=text(p,64,white);title.setSingleLine(true);root.addView(title);}
+ private void show(String p){page=p; LinearLayout root=new LinearLayout(this);root.setOrientation(1);root.setBackgroundColor(Color.BLACK);root.setPadding(dp(14),dp(8),dp(8),0);
+ LinearLayout nav=new LinearLayout(this);for(String s:new String[]{"menu","quickplay"}){TextView t=text(s,15,s.equals(p)||s.equals("menu")&&p.equals("home")?white:gray);t.setPadding(0,dp(8),dp(26),dp(12));t.setOnClickListener(v->show(s.equals("menu")?"home":s));nav.addView(t);}root.addView(nav);
+ if(!p.equals("home")){TextView title=text(p,48,white);title.setSingleLine(true);root.addView(title);}
  ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);scroll.setVerticalScrollBarEnabled(false);list=new LinearLayout(this);list.setOrientation(1);list.setPadding(0,dp(12),0,dp(24));scroll.addView(list);root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));setContentView(root);
  switch(p){case "home": for(String s:new String[]{"music","videos","pictures","internet","library","apps","settings"})row(s,()->show(s));break;
  case "quickplay":label("pinned");app("spotify","com.spotify.music");app("brave","com.brave.browser");app("libby","com.overdrive.mobile.android.libby");label("video");app("max","com.wbd.stream");app("hulu","com.hulu.plus");break;
